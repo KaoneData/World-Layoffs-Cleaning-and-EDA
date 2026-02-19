@@ -29,7 +29,7 @@ Dropped the auxiliary `row_num` column used during cleaning to finalize the data
 ---
 
 ##  Key SQL Technique: Self-Join for Data Imputation
-One of the most complex parts was filling in missing industry data. I used a **Self-Join** to populate null values from existing records of the same company:
+One of the most complex parts was filling in missing industry data. I used a **Self-Join** to populate null values from existing records of the same company :
 
 ```sql
 UPDATE layoffs_staging2 t1
