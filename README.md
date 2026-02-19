@@ -38,3 +38,45 @@ JOIN layoffs_staging2 t2
 SET t1.industry = t2.industry
 WHERE t1.industry IS NULL 
 AND t2.industry IS NOT NULL;
+
+```
+
+---
+
+## Exploratory Data Analysis (EDA)
+With the data cleaned and standardized, I explored the dataset to uncover trends and patterns in global layoffs. I focused on identifying chronological peaks, industry-specific volatility, and company rankings.
+
+### Key Analytical Highlights
+*   **Time-Series Analysis:** Created a **Monthly Rolling Total** of layoffs to visualize the progression of the "layoff wave."
+*   **Company Rankings:** Identified the top 5 companies with the most layoffs per year using a **Double CTE** and **DENSE_RANK()**.
+*   **Funding Impact:** Analyzed how `funds_raised_millions` correlated with the scale of workforce reductions.
+
+### Advanced SQL Technique: Multi-CTE Ranking
+To find the top 5 companies per year, I used a complex ranking logic that allows for yearly comparisons:
+
+```sql
+WITH Company_Year (company, years, total_laid_off) AS
+(
+    SELECT company, YEAR(`date`), SUM(total_laid_off)
+    FROM layoffs_staging2
+    GROUP BY company, YEAR(`date`)
+), Company_Year_Rank AS
+(
+    SELECT *, DENSE_RANK() OVER(PARTITION BY years ORDER BY total_laid_off DESC) AS Ranking
+    FROM Company_Year
+    WHERE years IS NOT NULL
+) 
+SELECT *
+FROM Company_Year_Rank
+WHERE Ranking <= 5;
+``` 
+
+*   **Part 1: Data Cleaning:** [View Cleaning Script](1_Data_Cleaning.sql)
+*   **Part 2: Exploratory Analysis:** [View EDA Script](2_Exploratory_Analysis.sql)
+
+## 👤 Author
+**Kaone Edward**
+
+*   [LinkedIn](https://www.linkedin.com/in/kaone-edward-bbb820197/)
+*   [GitHub](https://github.com/KaoneData)
+
